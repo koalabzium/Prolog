@@ -1,0 +1,128 @@
+nalezy(X,[X|_]).
+nalezy(X,[_|Reszta]):-
+    nalezy(X,Reszta).
+    
+ostatni([X],X).
+ostatni([_|Reszta],X):-
+    ostatni(Reszta,X).
+
+dlugosc([],0).
+dlugosc([_|Ogon],Dlug) :-
+    
+	dlugosc(Ogon,X),
+	Dlug is X+1, write(Dlug).
+
+sklej([],X,X).
+sklej([X|L1],L2,Cos) :-
+	sklej(L1,L2,L3),
+    Cos = [X|L3].
+
+nalezy1(X,L) :-
+	sklej(_,[X|_],L).
+
+ostatni2(X,L):-
+    sklej(_,[X],L).
+
+porownaj(L):- L=[_,_,A,A].
+
+zmien(X,[D,C,A,B|Reszta]):-
+    X=[D,C,B,A|Reszta].
+
+dodaj(X,L,[X|L]).
+
+usun(X,[X|Reszta],Reszta).
+usun(X,[Y|Ogon],Cos) :-
+	usun(X,Ogon,Reszta),
+    Cos = [Y|Reszta].
+
+zawiera(S,L) :-
+	sklej(S,_,L2),
+    sklej(_,L2,L).
+
+wstaw(X,L,Duza) :-
+	usun(X,Duza,L).
+
+permutacja([],[]).
+permutacja([X|L],P) :-
+    
+	permutacja(L,L1),
+	wstaw(X,L1,P).
+ 
+permutacja2([],[]).
+permutacja2(L,[X|P]) :-
+	usun(X,L,L1),
+	permutacja2(L1,P).
+    
+
+odwroc([],[]).
+odwroc([L|Ogonek],P):-
+    odwroc(Ogonek,CosInnego),
+    sklej(CosInnego,[L],P).
+
+usun3(L,Wynik):-
+    sklej(Wynik,[_,_,_],L).
+
+parzysta([]).
+parzysta([_|Reszta]):- nieparzysta(Reszta).
+nieparzysta([_|Reszta]) :- parzysta(Reszta).
+
+palindrom(P) :- 
+    odwroc(P,P).
+
+przesun([L|Reszta],Wynikowa) :-
+    sklej(Reszta,[L],Wynikowa).
+
+    znaczy(0,zero).   znaczy(1,jeden).
+      znaczy(2,dwa).    znaczy(3,trzy).
+      znaczy(4,cztery). znaczy(5,piec).
+      znaczy(6,szesc).  znaczy(7,siedem).
+      znaczy(8,osiem).  znaczy(9,dziewiec).
+
+przeloz([],[]).
+przeloz([L|Reszta],Wynikowa) :-
+    przeloz(Reszta,JakasInna),
+    znaczy(L,X),
+    sklej([X],JakasInna,Wynikowa).
+
+zawiera2([],_).
+zawiera2([L|Reszta],Inna):-
+    zawiera2(Reszta,Inna),
+    zawiera([L],Inna).
+
+subset([], []).
+subset([E|Tail], [E|NTail]):-
+ subset(Tail, NTail).
+subset([_|Tail], NTail):-
+ subset(Tail, NTail). 
+
+podziel([],[],[]).
+podziel([X|Reszta],Y,Z):-
+    podziel(Reszta,Y2,Z),
+    parzysta(Reszta),
+    sklej([X],Y2,Y).
+podziel([X|Reszta],Y,Z):-
+    podziel(Reszta,Y,Z2),
+    nieparzysta(Reszta),
+    sklej([X],Z2,Z).
+
+splaszcz([],[]).
+splaszcz([L|Ogon],X):-
+    splaszcz(Ogon,X2),
+    atomic(L),
+    sklej([L],X2,X).
+
+splaszcz([L|Ogon],X):-
+     \+ atomic(L),
+    splaszcz(L,X2),
+    splaszcz(Ogon,X1),
+    sklej(X2,X1,X).
+
+flatten2([],[]).
+
+flatten2([Atom|ListTail],[Atom|RetList]) :-
+ atomic(Atom), flatten2(ListTail,RetList).
+
+flatten2([List|ListTail],RetList) :-
+ flatten2(List,RetList1),
+ flatten(ListTail,RetList2),
+ sklej(RetList1,RetList2, RetList)
