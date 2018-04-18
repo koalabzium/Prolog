@@ -1,0 +1,73 @@
+% dane
+
+rodzina(
+	osoba(jan, kowalski,data(5,kwiecien,1946),pracuje(tpsa,3000)),
+	osoba(anna,kowalski,data(8,luty,1949),    pracuje(szkola,1500)), 
+	[
+	 osoba(maria,kowalski,data(20,maj,1973),     pracuje(argo_turist,4000)),
+	 osoba(pawel,kowalski,data(15,listopad,1979),zasilek)]).
+       
+rodzina(
+	osoba(krzysztof, malinowski, data(24,lipiec,1950), bezrobocie),
+	osoba(klara, malinowski, data(9,styczen,1951), pracuje(kghm,8000)),
+	[
+	 osoba(monika, malinowski, data(19,wrzesien,1980), bezrobocie)]
+	).
+
+% zaleznosci
+
+pensje(X,A) :- rodzina(X,_,_), pensja(X,A).
+pensje(X,A) :- rodzina(_,X,_), pensja(X,A).
+pensje(X,A) :- dziecko(X), pensja(X,A).
+
+imie(osoba(A,_,_,_),A).
+
+
+maz(X) :-
+	rodzina(X,_,_).
+
+zona(X) :-
+	rodzina(_,X,_).
+
+dziecko(X) :-
+	rodzina(_,_,Dzieci),
+	nalezy(X,Dzieci).
+
+istnieje(Osoba) :-
+	maz(Osoba)
+	;
+	zona(Osoba)
+	;
+	dziecko(Osoba).
+
+data_urodzenia(osoba(_,_,Data,_),Data).
+
+rok_urodzenia(osoba(_,_,data(_,_,A),_),A).
+
+pracuje(osoba(_,_,_,pracuje(_,_))).
+
+pensja(osoba(_,_,_,pracuje(_,P)),P).
+pensja(osoba(_,_,_,zasilek),500).
+pensja(osoba(_,_,_,bezrobocie),0).
+
+zarobki([],0).
+zarobki([Osoba|Lista],Suma) :-
+	pensja(Osoba,S),
+	zarobki(Lista,Reszta),
+	Suma is S + Reszta.
+
+% narzedzia
+nalezy(X,[X|_]).
+nalezy(X,[_|Yogon]) :-
+	nalezy(X,Yogon).
+
+książka(16, 'Flatlandia', autor('Edvin Abbot', 1838-1926),wydanie('Sell & Co',1884)).
+książka(28, 'R. U. R.', autor('Karel Capek', 1890-1938),wydanie('Palyers Press',2002)).
+książka(34, 'Kobieta z wydm', autor('Kobo Abe', 1924-1993),wydanie('Wydawnictwo Znak',2007)).
+książka(36, 'Zamek', autor('Frans Kafka', 1883-1924),wydanie('Zielona Sowa',2001)).
+książka(37, 'Gargantua i Pantagruel', autor(' François Rabelais', 1494-
+1553),wydanie('Siedmioróg',2004)).
+
+zyliRazem(A,G):-
+    książka(_,_,autor(A,C-_),_),
+    książka(_,_,autor(G,B-D),_),D>C,B<C.
