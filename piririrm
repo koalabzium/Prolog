@@ -1,0 +1,68 @@
+min(A,B,C):-
+    A>B, C=B;
+    A=<B, C=A.
+%L=[[[1,2],[2,3],[4,5]],[[1,2],2,3]].
+
+%A=[[1,2,3],[1,2,pobierzmnie],[1,pobierzmnie2,3]].
+
+pobierz([_,[_,_,A|_],[_,B|_]|_],A,B).
+
+trzeci([_,_,A|_],A).
+drugi([_,B|_],B).
+    
+
+nalezy(X,[X|_]).
+nalezy(X,[_|Reszta]):-
+    nalezy(X,Reszta).
+
+sumuj([X],X).
+sumuj([X|Reszta],W):-
+    sumuj(Reszta,W2),
+    W is W2+X,!.
+
+sklej([],X,X).
+sklej([X|L1],L2,[X|L3]):-
+    sklej(L1,L2,L3).
+
+listmin([X|R],Wynik):-
+    listmin(R,X,Wynik).
+
+usun(Lista,El,Wynik):-
+    sklej(A,[El|Reszta],Lista),
+    sklej(A,Reszta,Wynik).
+
+
+listmin([],Min,Min).
+listmin([El1|R],El2,Wynik):-
+    min(El1,El2,C),
+    listmin(R,C,Wynik).
+
+sortowanie([],[]).
+sortowanie(Lista,[Min|Reszta]):-
+    listmin(Lista,Min),
+    usun(Lista,Min,Lista2),
+    sortowanie(Lista2,Reszta).
+
+merge(A,[],A).
+merge([],B,B).
+merge([A|AT],[B|BT],[B|Reszta]):-
+    A>B, merge([A|AT],BT,Reszta).
+merge([A|AT],[B|BT],[A|Reszta]):-
+    B>=A, merge(AT,[B|BT],Reszta).
+    
+:-op(90,xfy,ma).
+ala ma kota.
+
+podzbior([],[]).
+podzbior([E|ET],[E|ETT]):-
+    podzbior(ET,ETT).
+podzbior([_|ET],E):-
+    podzbior(ET,E).
+
+
+
+podziel([],[],[]).
+podziel([A|[]],[A],[]).
+podziel([A,B],A,B).
+podziel([E1,E2|Reszta],[E1|YT],[E2|ZT]):-
+	podziel(Reszta,YT,ZT).
